@@ -166,14 +166,21 @@ main(int argc, char *argv[])
 
 	switch (state.cmd_type) {
 	case WLRCTL_COMMAND_KEYBOARD:
-		state.running = false;
+		if (!state.vkbd_mgr) {
+			die("Virtual Keyboard interface not found!\n");
+		}
 		run_keyboard(&state);
 		break;
 	case WLRCTL_COMMAND_POINTER:
+		if (!state.vp_mgr) {
+			die("Virtual Pointer interface not found!\n");
+		}
 		run_pointer(&state);
-		wl_display_roundtrip(state.display);
 		break;
 	case WLRCTL_COMMAND_TOPLEVEL:
+		if (!state.ftl_mgr) {
+			die("Foreign Toplevel Management interface not found!\n");
+		}
 		run_toplevel(&state);
 		break;
 	case WLRCTL_COMMAND_UNSPEC:

@@ -146,7 +146,6 @@ run_keyboard(struct wlrctl *state)
 	case KEYBOARD_ACTION_TYPE:
 		zwp_virtual_keyboard_v1_modifiers(cmd->device, 0, 0, 0, 0);
 		keyboard_type(cmd, cmd->text);
-		wl_display_flush(state->display);
 		break;
 	default:
 		break;
