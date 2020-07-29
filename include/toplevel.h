@@ -20,6 +20,7 @@ enum toplevel_action {
 	TOPLEVEL_ACTION_LIST,
 	TOPLEVEL_ACTION_MAXIMIZE,
 	TOPLEVEL_ACTION_MINIMIZE,
+	TOPLEVEL_ACTION_WAIT,
 };
 
 struct toplevel_matchspec {
@@ -40,6 +41,7 @@ struct wlrctl_toplevel_command {
 	struct wl_list toplevels;
 	bool any;
 	bool complete;
+	int waiting;
 	struct wlrctl *state;
 };
 
@@ -50,7 +52,7 @@ struct toplevel_data {
 	struct wl_array state;
 	struct wl_list link;
 	struct wlrctl_toplevel_command *cmd;
-	bool done;
+	bool matched, done;
 };
 
 void prepare_toplevel(struct wlrctl *state, int argc, char **argv);

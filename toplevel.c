@@ -26,6 +26,7 @@ parse_action(const char *action)
 		{"list",       TOPLEVEL_ACTION_LIST      },
 		{"maximize",   TOPLEVEL_ACTION_MAXIMIZE  },
 		{"minimize",   TOPLEVEL_ACTION_MINIMIZE  },
+		{"wait",       TOPLEVEL_ACTION_WAIT      },
 		{NULL, TOPLEVEL_ACTION_UNSPEC}
 	};
 
@@ -207,6 +208,7 @@ zwlr_foreign_toplevel_handle_v1_handle_done(void *user_data,
 		return;
 	} else {
 		data->cmd->any = true;
+		data->matched = true;
 	}
 
 	switch (data->cmd->action) {
@@ -236,9 +238,30 @@ zwlr_foreign_toplevel_handle_v1_handle_done(void *user_data,
 		data->cmd->complete = true;
 		stop_toplevel(data->cmd->state);
 		break;
+	case TOPLEVEL_ACTION_WAIT:
+		data->cmd->waiting++;
+		break;
 	case TOPLEVEL_ACTION_UNSPEC:
 		// unreachable
 		assert(false);
+	}
+}
+
+static void
+zwlr_foreign_toplevel_handle_v1_handle_closed(
+	void *user_data, struct zwlr_foreign_toplevel_handle_v1 *toplevel)
+{
+	struct toplevel_data *data = user_data;
+	zwlr_foreign_toplevel_handle_v1_destroy(toplevel);
+	if (data->cmd->complete || !data->matched) {
+		return;
+	}
+	if (data->cmd->action == TOPLEVEL_ACTION_WAIT) {
+		data->cmd->waiting--;
+		if (data->cmd->waiting <= 0) {
+			data->cmd->complete = true;
+			stop_toplevel(data->cmd->state);
+		}
 	}
 }
 
@@ -250,7 +273,7 @@ zwlr_foreign_toplevel_handle_v1_listener = {
 	.output_leave = noop,
 	.state = zwlr_foreign_toplevel_handle_v1_handle_state,
 	.done = zwlr_foreign_toplevel_handle_v1_handle_done,
-	.closed = noop,
+	.closed = zwlr_foreign_toplevel_handle_v1_handle_closed,
 };
 
 static void
@@ -326,6 +349,9 @@ complete_toplevel(void *data, struct wl_callback *callback, uint32_t serial)
 	struct wlrctl *state = data;
 	struct wlrctl_toplevel_command *cmd = state->cmd;
 	wl_callback_destroy(callback);
+	if (cmd->action == TOPLEVEL_ACTION_WAIT && (cmd->waiting > 0)) {
+		return;
+	}
 	if (!cmd->complete) {
 		cmd->complete = true;
 		cmd->state->failed = !cmd->any;

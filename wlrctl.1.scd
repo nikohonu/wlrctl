@@ -64,6 +64,11 @@ wlrctl [options...] [command]
 	Exit with a successful return code iff there is at least one window
 	matching the provided criteria.
 
+*wait* [matches...]
+	Wait to return a successful return code until all the matching windows
+	have closed. If there are no matches, exit with a failing return code
+	immediately.
+
 # TOPLEVEL MATCHSPEC
 
 A match is a colon separated attribute/value pair. e.g. To match a firefox
