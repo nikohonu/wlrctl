@@ -22,14 +22,16 @@ static void
 get_keymap(struct wlrctl_keyboard_command *cmd)
 {
 	int size = strlen(keymap_ascii_raw) + 1;
-
 	int fd = memfd_create("keymap", 0);
-	ftruncate(fd, size);
+	if(ftruncate(fd, size) < 0) {
+		die("Could not allocate shm for keymap\n");
+	};
+
 	void *keymap_data =
 		mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 	strcpy(keymap_data, keymap_ascii_raw);
-
 	munmap(keymap_data, size);
+
 	cmd->keymap.format = WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1;
 	cmd->keymap.fd = fd;
 	cmd->keymap.size = size;
