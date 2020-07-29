@@ -47,6 +47,10 @@ append(struct wl_array *arr, char *str)
 static bool
 contains(struct wl_array *arr, char *str)
 {
+	if (!str) {
+		return false;
+	}
+
 	char **cursor;
 	wl_array_for_each(cursor, arr) {
 		if (strcmp(str, *cursor) == 0) {
