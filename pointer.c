@@ -103,8 +103,7 @@ prepare_pointer(struct wlrctl *state, int argc, char *argv[])
 			parse_fixed(argv[2], &cmd->dx);
 			break;
 		default:
-			fprintf(stderr, "Extra argument: '%s'\n", argv[3]);
-			exit(EXIT_FAILURE);
+			die("Extra argument: '%s'\n", argv[3]);
 		}
 		break;
 	case POINTER_ACTION_UNSPEC:

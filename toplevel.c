@@ -37,8 +37,7 @@ append(struct wl_array *arr, char *str)
 {
 	char **p = wl_array_add(arr, sizeof (char *));
 	if (!p) {
-		fprintf(stderr, "Could not allocate pointer for matchspec\n");
-		exit(EXIT_FAILURE);
+		die("Could not allocate pointer for matchspec\n");
 	} else {
 		*p = str;
 	}
@@ -143,8 +142,7 @@ toplevel_data_create(struct wlrctl_toplevel_command *cmd)
 {
 	struct toplevel_data *data = calloc(1, sizeof (struct toplevel_data));
 	if (!data) {
-		fprintf(stderr, "Failed to allocate toplevel data\n");
-		exit(EXIT_FAILURE);
+		die("Failed to allocate toplevel data\n");
 	}
 	
 	wl_array_init(&data->state);
@@ -299,8 +297,7 @@ prepare_toplevel(struct wlrctl *state, int argc, char *argv[])
 	matchspec_init(&cmd->matchspec);
 
 	if (argc == 0) {
-		fprintf(stderr, "Missing toplevel action\n");
-		exit(EXIT_FAILURE);
+		die("Missing toplevel action\n");
 	}
 
 	char *action = argv[0];
@@ -332,7 +329,6 @@ complete_toplevel(void *data, struct wl_callback *callback, uint32_t serial)
 	if (!cmd->complete) {
 		cmd->complete = true;
 		cmd->state->failed = !cmd->any;
-		// fprintf(stderr, "No matches!\n");
 		stop_toplevel(state);
 	}
 }
