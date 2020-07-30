@@ -8,6 +8,7 @@ virtual-keyboard (keyboard command), and virtual-pointer (pointer command) proto
 ## Installation
 
 There is an AUR package for wlrctl [here][aur-wlrctl].
+And an openSUSE package [here][os-wlrctl].
 
 ## Features and Examples
 
@@ -29,3 +30,4 @@ Some example uses are:
 ... to focus firefox if it is running, otherwise start firefox.
 
 [aur-wlrctl]: https://aur.archlinux.org/packages/wlrctl
+[os-wlrctl]: https://build.opensuse.org/package/show/X11:Wayland/wlrctl
