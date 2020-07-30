@@ -7,7 +7,7 @@ enum toplevel_attr {
 	TOPLEVEL_ATTR_TITLE      = 1<<2,
 	TOPLEVEL_ATTR_MAXIMIZED  = 1<<3,
 	TOPLEVEL_ATTR_MINIMIZED  = 1<<4,
-	TOPLEVEL_ATTR_ACTIVE     = 1<<5,
+	TOPLEVEL_ATTR_ACTIVATED  = 1<<5,
 	TOPLEVEL_ATTR_FULLSCREEN = 1<<6,
 };
 
@@ -31,7 +31,7 @@ struct toplevel_matchspec {
 	// toplevel state
 	bool maximized;
 	bool minimized;
-	bool active;
+	bool activated;
 	bool fullscreen;
 };
 

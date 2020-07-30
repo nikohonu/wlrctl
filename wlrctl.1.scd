@@ -78,7 +78,8 @@ same key is specified twice, a window may match any of the given values. A match
 without a key is assumed to be an app_id, so just _firefox_ works in the example
 above.
 
-Currently supported attributes are: _app_id_, _title_.
+Currently supported attributes are: _app_id_, _title_, and _state_. Supported
+state values are: _maximized_, _minimized_, _active_, and _fullscreen_.
 
 # AUTHOR
 

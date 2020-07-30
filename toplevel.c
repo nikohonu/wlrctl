@@ -45,7 +45,22 @@ append(struct wl_array *arr, char *str)
 }
 
 static bool
-contains(struct wl_array *arr, char *str)
+contains_value(struct wl_array *arr, int value) {
+	if (!value) {
+		return false;
+	}
+
+	int *cursor;
+	wl_array_for_each(cursor, arr) {
+		if (*cursor == value) {
+			return true;
+		}
+	}
+	return false;
+}
+
+static bool
+contains_str(struct wl_array *arr, char *str)
 {
 	if (!str) {
 		return false;
@@ -85,24 +100,24 @@ matchspec_add_match(struct toplevel_matchspec *matchspec, char *match)
 		return;
 	}
 
-	static const struct token attrs[] = {
-		{"app-id", TOPLEVEL_ATTR_APPID},
-		{"app_id", TOPLEVEL_ATTR_APPID},
-		{"title",  TOPLEVEL_ATTR_TITLE},
+	static const struct token states[] = {
+		{"maximized",  TOPLEVEL_ATTR_MAXIMIZED },
+		{"minimized",  TOPLEVEL_ATTR_MINIMIZED },
+		{"activated",  TOPLEVEL_ATTR_ACTIVATED },
+		{"active",     TOPLEVEL_ATTR_ACTIVATED },
+		{"focused",    TOPLEVEL_ATTR_ACTIVATED },
+		{"fullscreen", TOPLEVEL_ATTR_FULLSCREEN},
+		{NULL, TOPLEVEL_ATTR_UNSPEC}
+	};
+
+	struct token attrs[] = {
+		{"app-id", TOPLEVEL_ATTR_APPID    },
+		{"app_id", TOPLEVEL_ATTR_APPID    },
+		{"title",  TOPLEVEL_ATTR_TITLE    },
+		{"state",  matchtok(states, value)},
 		{NULL, TOPLEVEL_ATTR_UNSPEC}
 	};
 	enum toplevel_attr pattr = matchtok(attrs, attr);
-
-	// static const struct token states[] = {
-	// 	{"maximized",  ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_MAXIMIZED },
-	// 	{"minimized",  ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_MINIMIZED },
-	// 	{"activated",  ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_ACTIVATED },
-	// 	{"active",     ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_ACTIVATED },
-	// 	{"focused",    ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_ACTIVATED },
-	// 	{"fullscreen", ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_FULLSCREEN},
-	// 	{NULL, 0}
-	// };
-	// enum zwlr_foreign_toplevel_handle_v1_state state = matchtok(states, state);
 
 	switch (pattr) {
 	case TOPLEVEL_ATTR_APPID:
@@ -113,9 +128,25 @@ matchspec_add_match(struct toplevel_matchspec *matchspec, char *match)
 		matchspec->attrs |= pattr;
 		append(&matchspec->titles, value);
 		return;
+	case TOPLEVEL_ATTR_MAXIMIZED:
+		matchspec->attrs |= pattr;
+		matchspec->maximized = true;
+		break;
+	case TOPLEVEL_ATTR_MINIMIZED:
+		matchspec->attrs |= pattr;
+		matchspec->minimized = true;
+		break;
+	case TOPLEVEL_ATTR_ACTIVATED:
+		matchspec->attrs |= pattr;
+		matchspec->activated = true;
+		break;
+	case TOPLEVEL_ATTR_FULLSCREEN:
+		matchspec->attrs |= pattr;
+		matchspec->fullscreen = true;
+		break;
 	case TOPLEVEL_ATTR_UNSPEC:
 	default:
-		die("Unknown attribute: '%s'\n", attr);
+		die("Unknown attribute: '%s:%s'\n", attr, value);
 	}
 
 	return;
@@ -126,12 +157,40 @@ is_matched(struct toplevel_data *data)
 {
 	struct toplevel_matchspec *matchspec = &data->cmd->matchspec;
 	if (matchspec->attrs & TOPLEVEL_ATTR_APPID) {
-		if (!contains(&matchspec->app_ids, data->app_id)) {
+		if (!contains_str(&matchspec->app_ids, data->app_id)) {
 			return false;
 		}
 	}
 	if (matchspec->attrs & TOPLEVEL_ATTR_TITLE) {
-		if (!contains(&matchspec->titles, data->title)) {
+		if (!contains_str(&matchspec->titles, data->title)) {
+			return false;
+		}
+	}
+	if (matchspec->attrs & TOPLEVEL_ATTR_MAXIMIZED) {
+		if (contains_value(&data->state,
+			ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_MAXIMIZED) ^
+			matchspec->maximized) {
+			return false;
+		}
+	}
+	if (matchspec->attrs & TOPLEVEL_ATTR_MINIMIZED) {
+		if (contains_value(&data->state,
+			ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_MINIMIZED) ^
+			matchspec->minimized) {
+			return false;
+		}
+	}
+	if (matchspec->attrs & TOPLEVEL_ATTR_ACTIVATED) {
+		if (contains_value(&data->state,
+			ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_ACTIVATED) ^
+			matchspec->activated) {
+			return false;
+		}
+	}
+	if (matchspec->attrs & TOPLEVEL_ATTR_FULLSCREEN) {
+		if (contains_value(&data->state,
+			ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_FULLSCREEN) ^
+			matchspec->fullscreen) {
 			return false;
 		}
 	}
