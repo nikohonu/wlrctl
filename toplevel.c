@@ -27,6 +27,7 @@ parse_action(const char *action)
 		{"maximize",   TOPLEVEL_ACTION_MAXIMIZE  },
 		{"minimize",   TOPLEVEL_ACTION_MINIMIZE  },
 		{"wait",       TOPLEVEL_ACTION_WAIT      },
+		{"waitfor",    TOPLEVEL_ACTION_WAITFOR   },
 		{NULL, TOPLEVEL_ACTION_UNSPEC}
 	};
 
@@ -257,7 +258,7 @@ zwlr_foreign_toplevel_handle_v1_handle_done(void *user_data,
 	)
 {
 	struct toplevel_data *data = user_data;
-	if (data->done) {
+	if (data->cmd->action != TOPLEVEL_ACTION_WAITFOR && data->done) {
 		return;
 	} else {
 		data->done = true;
@@ -294,6 +295,7 @@ zwlr_foreign_toplevel_handle_v1_handle_done(void *user_data,
 		}
 		break;
 	case TOPLEVEL_ACTION_FIND:
+	case TOPLEVEL_ACTION_WAITFOR:
 		data->cmd->complete = true;
 		stop_toplevel(data->cmd->state);
 		break;
@@ -408,7 +410,8 @@ complete_toplevel(void *data, struct wl_callback *callback, uint32_t serial)
 	struct wlrctl *state = data;
 	struct wlrctl_toplevel_command *cmd = state->cmd;
 	wl_callback_destroy(callback);
-	if (cmd->action == TOPLEVEL_ACTION_WAIT && (cmd->waiting > 0)) {
+	if (cmd->action == TOPLEVEL_ACTION_WAITFOR ||
+		(cmd->action == TOPLEVEL_ACTION_WAIT && (cmd->waiting > 0))) {
 		return;
 	}
 	if (!cmd->complete) {

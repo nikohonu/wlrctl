@@ -69,6 +69,10 @@ wlrctl [options...] [command]
 	have closed. If there are no matches, exit with a failing return code
 	immediately.
 
+*waitfor* [matches...]
+	Wait to return a successful return code until there is at least one
+	window that matches the requested criteria.
+
 # TOPLEVEL MATCHSPEC
 
 A match is a colon separated attribute/value pair. e.g. To match a firefox

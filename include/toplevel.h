@@ -21,6 +21,7 @@ enum toplevel_action {
 	TOPLEVEL_ACTION_MAXIMIZE,
 	TOPLEVEL_ACTION_MINIMIZE,
 	TOPLEVEL_ACTION_WAIT,
+	TOPLEVEL_ACTION_WAITFOR,
 };
 
 struct toplevel_matchspec {
