@@ -27,7 +27,7 @@ wlrcmd_pointer=("$reply[@]")
 	local -a windows matchspecs
 	windows=(${(@f)"$(__wlrctl toplevel list)"})
 	matchspecs=( app_id:${^windows%%: *} title:${^windows#*: } )
-	matchspecs+=( state:{minimized,maximized,active,fullscreen} )
+	matchspecs+=( state:{{un,}minimized,{un,}maximized,{in,}active,{un,}fullscreen} )
 	_multi_parts ':' matchspecs
 }
 local -a wlrcmd_toplevel_attr=(/$'[^\0]#\0'/ ':_wlr_toplevel_attr')

@@ -78,12 +78,17 @@ wlrctl [options...] [command]
 A match is a colon separated attribute/value pair. e.g. To match a firefox
 window, a suitable match value is _app\_id:firefox_. You may give any number of
 match specifiers, and a window must match all of them to be considered. If the
-same key is specified twice, a window may match any of the given values. A match
-without a key is assumed to be an app_id, so just _firefox_ works in the example
-above.
+app\_id or title keys are specified more than once, a window may match any of
+the given values. Otherwise later key value pairs override previous ones. A
+match without a key is assumed to be an app_id, so just _firefox_ works in the
+example above.
 
-Currently supported attributes are: _app_id_, _title_, and _state_. Supported
-state values are: _maximized_, _minimized_, _active_, and _fullscreen_.
+Currently supported attributes are: _app_id_, _title_, and _state_.
+
+Supported state values are: _maximized_, _minimized_, _active_, and
+_fullscreen_, and their negations: _unmaximized_, _unminimized_, _inactive_,
+and _unfullscreen_.  You can also use a '-' prefix, for example
+_state:-fullscreen_.
 
 # AUTHOR
 

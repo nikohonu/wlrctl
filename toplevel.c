@@ -34,6 +34,31 @@ parse_action(const char *action)
 	return matchtok(actions, action);
 }
 
+static enum toplevel_attr
+parse_state(const char *state, bool *enabled){
+	static const struct token states[] = {
+		{"maximized",  TOPLEVEL_ATTR_MAXIMIZED },
+		{"minimized",  TOPLEVEL_ATTR_MINIMIZED },
+		{"activated",  TOPLEVEL_ATTR_ACTIVATED },
+		{"active",     TOPLEVEL_ATTR_ACTIVATED },
+		{"focused",    TOPLEVEL_ATTR_ACTIVATED },
+		{"fullscreen", TOPLEVEL_ATTR_FULLSCREEN},
+		{NULL, TOPLEVEL_ATTR_UNSPEC}
+	};
+	if (strncmp(state, "-", 1) == 0) {
+		*enabled = false;
+		state += 1;
+	} else if (
+		strncmp(state, "in", 2) == 0 ||
+		strncmp(state, "un", 2) == 0 ) {
+		*enabled = false;
+		state += 2;
+	} else {
+		*enabled = true;
+	}
+	return matchtok(states, state);
+}
+
 static void
 append(struct wl_array *arr, char *str)
 {
@@ -101,21 +126,12 @@ matchspec_add_match(struct toplevel_matchspec *matchspec, char *match)
 		return;
 	}
 
-	static const struct token states[] = {
-		{"maximized",  TOPLEVEL_ATTR_MAXIMIZED },
-		{"minimized",  TOPLEVEL_ATTR_MINIMIZED },
-		{"activated",  TOPLEVEL_ATTR_ACTIVATED },
-		{"active",     TOPLEVEL_ATTR_ACTIVATED },
-		{"focused",    TOPLEVEL_ATTR_ACTIVATED },
-		{"fullscreen", TOPLEVEL_ATTR_FULLSCREEN},
-		{NULL, TOPLEVEL_ATTR_UNSPEC}
-	};
-
+	bool enabled = true;
 	struct token attrs[] = {
-		{"app-id", TOPLEVEL_ATTR_APPID    },
-		{"app_id", TOPLEVEL_ATTR_APPID    },
-		{"title",  TOPLEVEL_ATTR_TITLE    },
-		{"state",  matchtok(states, value)},
+		{"app-id", TOPLEVEL_ATTR_APPID         },
+		{"app_id", TOPLEVEL_ATTR_APPID         },
+		{"title",  TOPLEVEL_ATTR_TITLE         },
+		{"state",  parse_state(value, &enabled)},
 		{NULL, TOPLEVEL_ATTR_UNSPEC}
 	};
 	enum toplevel_attr pattr = matchtok(attrs, attr);
@@ -131,19 +147,19 @@ matchspec_add_match(struct toplevel_matchspec *matchspec, char *match)
 		return;
 	case TOPLEVEL_ATTR_MAXIMIZED:
 		matchspec->attrs |= pattr;
-		matchspec->maximized = true;
+		matchspec->maximized = enabled;
 		break;
 	case TOPLEVEL_ATTR_MINIMIZED:
 		matchspec->attrs |= pattr;
-		matchspec->minimized = true;
+		matchspec->minimized = enabled;
 		break;
 	case TOPLEVEL_ATTR_ACTIVATED:
 		matchspec->attrs |= pattr;
-		matchspec->activated = true;
+		matchspec->activated = enabled;
 		break;
 	case TOPLEVEL_ATTR_FULLSCREEN:
 		matchspec->attrs |= pattr;
-		matchspec->fullscreen = true;
+		matchspec->fullscreen = enabled;
 		break;
 	case TOPLEVEL_ATTR_UNSPEC:
 	default:
