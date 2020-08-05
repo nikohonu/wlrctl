@@ -189,7 +189,9 @@ main(int argc, char *argv[])
 	}
 
 	while (state.running) {
-		wl_display_dispatch(state.display);
+		if (wl_display_dispatch(state.display) != 0) {
+			break;
+		};
 	}
 
 	return state.failed ? EXIT_FAILURE : EXIT_SUCCESS;
