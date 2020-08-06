@@ -189,7 +189,7 @@ main(int argc, char *argv[])
 	}
 
 	while (state.running) {
-		if (wl_display_dispatch(state.display) != 0) {
+		if (wl_display_dispatch(state.display) < 0) {
 			break;
 		};
 	}
