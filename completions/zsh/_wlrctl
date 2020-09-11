@@ -30,7 +30,7 @@ wlrcmd_pointer=("$reply[@]")
 	matchspecs+=( state:{{un,}minimized,{un,}maximized,{in,}active,{un,}fullscreen} )
 	_multi_parts ':' matchspecs
 }
-local -a wlrcmd_toplevel_attr=(/$'[^\0]#\0'/ ':_wlr_toplevel_attr')
+local -a wlrcmd_toplevel_attr=(/$'[^\0]#\0'/ ':_wlr_toplevel_attr' '#')
 
 local -a wlrcmd_toplevel
 _regex_words action 'toplevel action' 'maximize' 'minimize' 'focus' \
