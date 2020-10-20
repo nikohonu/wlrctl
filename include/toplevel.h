@@ -51,6 +51,7 @@ struct toplevel_data {
 	char *app_id;
 	char *title;
 	struct wl_array state;
+	struct zwlr_foreign_toplevel_handle_v1 *parent;
 	struct wl_list link;
 	struct wlrctl_toplevel_command *cmd;
 	bool matched, done;

@@ -342,6 +342,15 @@ zwlr_foreign_toplevel_handle_v1_handle_closed(
 	}
 }
 
+static void
+zwlr_foreign_toplevel_handle_v1_handle_parent(
+	void *user_data, struct zwlr_foreign_toplevel_handle_v1 *toplevel,
+	struct zwlr_foreign_toplevel_handle_v1 *parent)
+{
+	struct toplevel_data *data = user_data;
+	data->parent = parent;
+}
+
 static struct zwlr_foreign_toplevel_handle_v1_listener
 zwlr_foreign_toplevel_handle_v1_listener = {
 	.title = zwlr_foreign_toplevel_handle_v1_handle_title,
@@ -351,6 +360,7 @@ zwlr_foreign_toplevel_handle_v1_listener = {
 	.state = zwlr_foreign_toplevel_handle_v1_handle_state,
 	.done = zwlr_foreign_toplevel_handle_v1_handle_done,
 	.closed = zwlr_foreign_toplevel_handle_v1_handle_closed,
+	.parent = zwlr_foreign_toplevel_handle_v1_handle_parent,
 };
 
 static void

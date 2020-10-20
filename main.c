@@ -54,7 +54,7 @@ registry_handle_global(void *data, struct wl_registry *registry,
 	if (strcmp(interface, zwlr_foreign_toplevel_manager_v1_interface.name) == 0) {
 		if (state->cmd_type == WLRCTL_COMMAND_TOPLEVEL) {
 			state->ftl_mgr = wl_registry_bind(
-				registry, name, &zwlr_foreign_toplevel_manager_v1_interface, 2
+				registry, name, &zwlr_foreign_toplevel_manager_v1_interface, 3
 			);
 		}
 	}
