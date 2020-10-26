@@ -22,7 +22,16 @@ static void
 get_keymap(struct wlrctl_keyboard_command *cmd)
 {
 	int size = strlen(keymap_ascii_raw) + 1;
+#if defined(MEMFD_CREATE)
 	int fd = memfd_create("keymap", 0);
+#elif defined(__FreeBSD__)
+	// memfd_create on FreeBSD 13 is SHM_ANON without sealing support
+	int fd = shm_open(SHM_ANON, O_RDWR, 0600);
+#else
+	char name[] = "/tmp/keymap-XXXXXX";
+	int fd = mkstemp(name);
+	unlink(name);
+#endif
 	if(ftruncate(fd, size) < 0) {
 		die("Could not allocate shm for keymap\n");
 	};

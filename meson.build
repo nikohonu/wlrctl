@@ -22,6 +22,10 @@ add_project_arguments('-Wno-missing-braces', language: 'c')
 version = '"@0@"'.format(meson.project_version())
 add_project_arguments('-DWLRCTL_VERSION=@0@'.format(version), language: 'c')
 
+if cc.has_function('memfd_create')
+  add_project_arguments('-DMEMFD_CREATE', language: 'c')
+endif
+
 xkbcommon = dependency('xkbcommon')
 wayland_client = dependency('wayland-client')
 
