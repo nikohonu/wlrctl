@@ -9,6 +9,7 @@ enum keyboard_action {
 struct wlrctl_keyboard_command {
 	enum keyboard_action action;
 	char *text;
+	int mods_depressed;
 
 	struct zwp_virtual_keyboard_v1 *device;
 	struct xkb_context *xkb_context;

@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
 #include <assert.h>
+#include <ctype.h>
 #include <fcntl.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -114,14 +115,43 @@ prepare_keyboard(struct wlrctl *state, int argc, char *argv[])
 	case KEYBOARD_ACTION_TYPE:
 		if (argc < 2) {
 			die("Missing text to type!\n");
-		} else if (argc == 2) {
-			if (is_ascii(argv[1])) {
-				cmd->text = strdup(argv[1]);
-			} else {
-				die("Only ascii strings are currently supported\n");
-			}
+		}
+		if (is_ascii(argv[1])) {
+			cmd->mods_depressed = 0;
+			cmd->text = strdup(argv[1]);
 		} else {
-			die("Extra argument: '%s'\n", argv[2]);
+			die("Only ascii strings are currently supported\n");
+		}
+		if (argc >= 3 && strcmp(argv[2], "modifiers")) {
+			die("Invalid argument: '%s'\n", argv[2]);
+		} else if (argc >= 5) {
+			die("Invalid argument: '%s'\n", argv[4]);
+		} else {
+			if (argc == 3) {
+				die("No modifiers provided\n");
+			}
+			char *keys = (char *)malloc(strlen(argv[3]) + 1);
+			strcpy(keys, argv[3]);
+			char *key;
+			key = strtok(keys, ",");
+			while (key != NULL) {
+				for (size_t i = 0; i < strlen(key); i++) {
+					key[i] = toupper((unsigned char) key[i]);
+				}
+				if (strcmp(key, "SHIFT") == 0) {
+					cmd->mods_depressed |= 1;
+				} else if (strcmp(key, "CTRL") == 0) {
+					cmd->mods_depressed |= 4;
+				} else if (strcmp(key, "ALT") == 0) {
+					cmd->mods_depressed |= 8;
+				} else if (strcmp(key, "SUPER") == 0) {
+					cmd->mods_depressed |= 64;
+				} else {
+					die("Unsupported modifier: '%s'\n", key);
+				}
+				key = strtok(NULL, ",");
+			}
+			free(keys);
 		}
 		break;
 	case KEYBOARD_ACTION_UNSPEC:
@@ -153,7 +183,7 @@ run_keyboard(struct wlrctl *state)
 
 	switch (cmd->action) {
 	case KEYBOARD_ACTION_TYPE:
-		zwp_virtual_keyboard_v1_modifiers(cmd->device, 0, 0, 0, 0);
+		zwp_virtual_keyboard_v1_modifiers(cmd->device, cmd->mods_depressed, 0, 0, 0);
 		keyboard_type(cmd, cmd->text);
 		break;
 	default:

@@ -29,8 +29,12 @@ wlrctl [options...] [command]
 
 # KEYBOARD ACTIONS
 
-*type* <string>
+*type* <string> [modifiers ...]
 	Send a string to be typed into the focused client
+
+	*modifiers* <SHIFT,CTRL,ALT,SUPER>
+	Comma-separated list of modifiers that will be depressed on the
+	virtual keyboard while string is being typed.
 
 # POINTER ACTIONS
 
