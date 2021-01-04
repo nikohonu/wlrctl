@@ -18,6 +18,7 @@ protocols = [
 	'virtual-keyboard-unstable-v1.xml',
 	'wlr-virtual-pointer-unstable-v1.xml',
 	'wlr-foreign-toplevel-management-unstable-v1.xml',
+	'wlr-output-management-unstable-v1.xml',
 ]
 
 client_protos_src = []

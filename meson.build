@@ -37,6 +37,7 @@ src_files = [
 	'keyboard.c',
 	'pointer.c',
 	'toplevel.c',
+	'output.c',
 	'util.c',
 ]
 

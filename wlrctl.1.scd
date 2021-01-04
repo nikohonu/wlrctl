@@ -27,6 +27,9 @@ wlrctl [options...] [command]
 *window|toplevel* <action>
 	Use the foreign toplevel interface.
 
+*output* { <action> | <identifier> [config_action] }
+	Use the output management interface.
+
 # KEYBOARD ACTIONS
 
 *type* <string> [modifiers ...]
@@ -76,6 +79,11 @@ wlrctl [options...] [command]
 *waitfor* [matches...]
 	Wait to return a successful return code until there is at least one
 	window that matches the requested criteria.
+
+# OUTPUT ACTIONS
+
+*list*
+	List the names of all known outputs
 
 # TOPLEVEL MATCHSPEC
 

@@ -11,11 +11,13 @@
 #include "keyboard.h"
 #include "pointer.h"
 #include "toplevel.h"
+#include "output.h"
 #include "util.h"
 
 #include "virtual-keyboard-unstable-v1-client-protocol.h"
 #include "wlr-virtual-pointer-unstable-v1-client-protocol.h"
 #include "wlr-foreign-toplevel-management-unstable-v1-client-protocol.h"
+#include "wlr-output-management-unstable-v1-client-protocol.h"
 
 static void noop() {}
 
@@ -58,6 +60,15 @@ registry_handle_global(void *data, struct wl_registry *registry,
 			);
 		}
 	}
+
+	// Bind zwlr_output_manager_v1
+	if (strcmp(interface, zwlr_output_manager_v1_interface.name) == 0) {
+		if (state->cmd_type == WLRCTL_COMMAND_OUTPUT) {
+			state->output_mgr = wl_registry_bind(
+				registry, name, &zwlr_output_manager_v1_interface, 2
+			);
+		}
+	}
 }
 
 static const struct wl_registry_listener
@@ -75,6 +86,7 @@ prepare_command(struct wlrctl *state, int argc, char *argv[])
 		{"pointer",  WLRCTL_COMMAND_POINTER },
 		{"toplevel", WLRCTL_COMMAND_TOPLEVEL},
 		{"window",   WLRCTL_COMMAND_TOPLEVEL},
+		{"output",   WLRCTL_COMMAND_OUTPUT  },
 		{NULL, WLRCTL_COMMAND_UNSPEC},
 	};
 
@@ -88,6 +100,9 @@ prepare_command(struct wlrctl *state, int argc, char *argv[])
 		break;
 	case WLRCTL_COMMAND_TOPLEVEL:
 		prepare_toplevel(state, argc - 1, argv + 1);
+		break;
+	case WLRCTL_COMMAND_OUTPUT:
+		prepare_output(state, argc - 1, argv + 1);
 		break;
 	case WLRCTL_COMMAND_UNSPEC:
 		return false;
@@ -182,6 +197,12 @@ main(int argc, char *argv[])
 			die("Foreign Toplevel Management interface not found!\n");
 		}
 		run_toplevel(&state);
+		break;
+	case WLRCTL_COMMAND_OUTPUT:
+		if (!state.output_mgr) {
+			die("Output Management interface not found!\n");
+		}
+		run_output(&state);
 		break;
 	case WLRCTL_COMMAND_UNSPEC:
 		// unreachable
