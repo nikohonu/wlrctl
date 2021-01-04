@@ -37,11 +37,17 @@ _regex_words action 'toplevel action' 'maximize' 'minimize' 'focus' \
 	'activate' 'fullscreen' 'close' 'list' 'find' 'wait' 'waitfor'
 wlrcmd_toplevel=( "$reply[@]" "$wlrcmd_toplevel_attr[@]" )
 
+local -a wlrcmd_output
+_regex_words action 'output action' \
+	'list:List the avaialble output names'
+wlrcmd_output=("$reply[@]")
+
 local -a wlrcmd
 _regex_words commands 'wlr command' \
 	'keyboard:Control a virtual keyboard:$wlrcmd_keyboard' \
 	'pointer:Control a virtual pointer:$wlrcmd_pointer' \
-	{window,toplevel}':Manage windows:$wlrcmd_toplevel'
+	{window,toplevel}':Manage windows:$wlrcmd_toplevel' \
+	'output:Manage outputs:$wlrcmd_output'
 wlrcmd=( /$'[^\0]#\0'/ "$reply[@]" )
 _regex_arguments _wlrcmd "$wlrcmd[@]"
 
