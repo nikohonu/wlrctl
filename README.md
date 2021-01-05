@@ -53,4 +53,4 @@ You can send patches to the [mailing list][list-wlrctl] or submit an issue on th
 [aur-wlrctl]: https://aur.archlinux.org/packages/wlrctl
 [os-wlrctl]: https://build.opensuse.org/package/show/X11:Wayland/wlrctl
 [todo-wlrctl]: https://todo.sr.ht/~brocellous/wlrctl
-[list-wlrctl]: https://lists.sr.ht/~brocellous/wlrctl-dev
+[list-wlrctl]: https://lists.sr.ht/~brocellous/public-inbox
