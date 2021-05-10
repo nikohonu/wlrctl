@@ -5,11 +5,7 @@ wlrctl is a command line utility for miscellaneous wlroots Wayland extensions.
 At this time, wlrctl supports the foreign-toplevel-mangement (window/toplevel command),
 virtual-keyboard (keyboard command), and virtual-pointer (pointer command) protocols.
 
-## Warning
-
-At the time of this writing, the release version of wlroots has serious session breaking
-bugs and crashes related to these protocols. If you want to use wlrctl with wlroots/sway
-you will need a wlroots 0.12+ or sway 1.6+ version.
+Requires wlroots 0.13+
 
 ## Installation
 
