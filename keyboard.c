@@ -124,12 +124,9 @@ prepare_keyboard(struct wlrctl *state, int argc, char *argv[])
 		}
 		if (argc >= 3 && strcmp(argv[2], "modifiers")) {
 			die("Invalid argument: '%s'\n", argv[2]);
-		} else if (argc >= 5) {
-			die("Invalid argument: '%s'\n", argv[4]);
-		} else {
-			if (argc == 3) {
-				die("No modifiers provided\n");
-			}
+		} else if (argc == 3) {
+			die("No modifiers provided\n");
+		} else if (argc == 4) {
 			char *keys = (char *)malloc(strlen(argv[3]) + 1);
 			strcpy(keys, argv[3]);
 			char *key;
@@ -152,6 +149,8 @@ prepare_keyboard(struct wlrctl *state, int argc, char *argv[])
 				key = strtok(NULL, ",");
 			}
 			free(keys);
+		} else if (argc >= 5) {
+			die("Invalid argument: '%s'\n", argv[4]);
 		}
 		break;
 	case KEYBOARD_ACTION_UNSPEC:
